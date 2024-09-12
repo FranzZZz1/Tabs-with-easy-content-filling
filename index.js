@@ -16,25 +16,16 @@ function tabsInit() {
         WRONG_IFRAME_TEXT: "Неверный тип iframe, либо неправильно введен адрес",
     };
 
-    const tabsSection =
-        document.querySelector(data.tabsSectionClass || ".tabs__section") ||
-        null;
+    const tabsSection = document.querySelector(data.tabsSectionClass || ".tabs__section") || null;
     const tabsContainer =
-        document.querySelector(data.tabsContainerClass || ".tabs__container") ||
-        null;
+        document.querySelector(data.tabsContainerClass || ".tabs__container") || null;
     const tabsButtonsWrapper =
-        document.querySelector(
-            data.tabsNavWrapperClass || ".tabs__navigation-wrapper"
-        ) || null;
+        document.querySelector(data.tabsNavWrapperClass || ".tabs__navigation-wrapper") || null;
     const tabsMain = document.querySelector(data.tabsClass || ".tabs") || null;
     const tabsButtons =
-        document.querySelector(data.tabsButtonsClass || ".tabs__navigation") ||
-        null;
-    const tabsContent =
-        document.querySelector(data.tabsContentClass || ".tabs__content") ||
-        null;
-    const tabsLine =
-        document.querySelector(data.tabsLine || ".tabs__line") || null;
+        document.querySelector(data.tabsButtonsClass || ".tabs__navigation") || null;
+    const tabsContent = document.querySelector(data.tabsContentClass || ".tabs__content") || null;
+    const tabsLine = document.querySelector(data.tabsLine || ".tabs__line") || null;
 
     function addClass(items, sampleClass) {
         if (sampleClass === null || sampleClass === undefined) return;
@@ -71,9 +62,7 @@ function tabsInit() {
 
         if (data.tabs.length > data.content.length) {
             for (let i = 0; i < difference; i++) {
-                data.content.push([
-                    `${contentTypes.EMPTY}: ${warningsTextContent.EMPTY_TEXT}`,
-                ]);
+                data.content.push([`${contentTypes.EMPTY}: ${warningsTextContent.EMPTY_TEXT}`]);
             }
         } else {
             for (let i = 0; i < difference; i++) {
@@ -87,6 +76,9 @@ function tabsInit() {
         tab.setAttribute("type", "button");
         tab.className = `tabs__button`;
         tab.textContent = tabText;
+        if (!tab.textContent.trim()) {
+            tab.textContent = warningsTextContent.EMPTY_TAB;
+        }
         tab.dataset.tabsTitle = "";
         tabsButtons.appendChild(tab);
 
@@ -108,8 +100,7 @@ function tabsInit() {
         } else {
             data.content[index].forEach((contentItem) => {
                 if (Array.isArray(contentItem)) {
-                    const nestedContentDiv =
-                        createNestedContentDiv(contentItem);
+                    const nestedContentDiv = createNestedContentDiv(contentItem);
                     tabContent.appendChild(nestedContentDiv);
                 } else {
                     createContent(contentItem, tabContent);
@@ -189,10 +180,7 @@ function tabsInit() {
                 "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             );
             iframe.setAttribute("allowfullscreen", "");
-        } else if (
-            type !== contentTypes.IFRAME_YOUTUBE &&
-            !isYouTubeVideoLink(src)
-        ) {
+        } else if (type !== contentTypes.IFRAME_YOUTUBE && !isYouTubeVideoLink(src)) {
             iframe.src = src;
             iframe.frameBorder = 0;
         }
@@ -217,9 +205,7 @@ function tabsInit() {
     function createTitleElement(title, type) {
         const tabTitle = document.createElement("h3");
         tabTitle.className = `tabs__title ${
-            type === contentTypes.TITLE_MD
-                ? "tabs__title--md"
-                : "tabs__title--lg"
+            type === contentTypes.TITLE_MD ? "tabs__title--md" : "tabs__title--lg"
         }`;
         tabTitle.textContent = title;
 
@@ -298,10 +284,7 @@ function tabsInit() {
         };
 
         if (contentType in contentCreators) {
-            const contentItem = contentCreators[contentType](
-                contentValue,
-                contentType
-            );
+            const contentItem = contentCreators[contentType](contentValue, contentType);
             if (contentItem) {
                 parent.appendChild(contentItem);
             }
@@ -335,8 +318,7 @@ function tabsInit() {
                 tabsContent.forEach((tabsContentItem, index) => {
                     tabsTitles[index].setAttribute("data-tabs-title", "");
                     tabsContentItem.setAttribute("data-tabs-item", "");
-                    tabsContentItem.hidden =
-                        !tabsTitles[index].classList.contains("_tab-active");
+                    tabsContentItem.hidden = !tabsTitles[index].classList.contains("_tab-active");
                 });
             }
             if (tabsLine && tabsTitles[0]) {
@@ -364,19 +346,77 @@ function tabsInit() {
                 });
             }
         }
+
+        function updateTabsLine(tabsLine, activeTab) {
+            if (tabsLine && activeTab) {
+                const tabsLineStyles = window.getComputedStyle(tabsLine);
+                const tabsLineVisibility = tabsLineStyles.getPropertyValue("display");
+
+                if (tabsLineVisibility !== "none") {
+                    tabsLine.style.width = activeTab.offsetWidth + "px";
+                    tabsLine.style.left = activeTab.offsetLeft + "px";
+                }
+            }
+        }
+
+        // function setTabsAction(e) {
+        //     const el = e.target;
+        //     if (el.closest("[data-tabs-title]")) {
+        //         const tabTitle = el.closest("[data-tabs-title]");
+        //         const tabsBlock = tabTitle.closest("[data-tabs]");
+        //         if (!tabTitle.classList.contains("_tab-active")) {
+        //             let tabActiveTitle = tabsBlock.querySelectorAll(
+        //                 "[data-tabs-title]._tab-active"
+        //             );
+        //             tabActiveTitle.length
+        //                 ? (tabActiveTitle = Array.from(tabActiveTitle).filter(
+        //                       (item) => item.closest("[data-tabs]") === tabsBlock
+        //                   ))
+        //                 : null;
+        //             tabActiveTitle.length
+        //                 ? tabActiveTitle[0].classList.remove("_tab-active")
+        //                 : null;
+        //             tabTitle.classList.add("_tab-active");
+        //             setTabsStatus(tabsBlock);
+        //         }
+        //         e.preventDefault();
+
+        //         const tabsLineStyles = window.getComputedStyle(tabsLine);
+        //         const tabsLineVisibility = tabsLineStyles.getPropertyValue("display");
+        //         if (tabsLine && tabsLineVisibility !== "none") {
+        //             tabsLine.style.width = el.offsetWidth + "px";
+        //             tabsLine.style.left = el.offsetLeft + "px";
+        //         }
+        //     }
+        // }
+
+        let resizeObserver = null;
+
+        function observeActiveTabResize(tabsLine, activeTab) {
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
+
+            resizeObserver = new ResizeObserver(() => {
+                updateTabsLine(tabsLine, activeTab);
+            });
+
+            resizeObserver.observe(activeTab);
+        }
+
         function setTabsAction(e) {
             const el = e.target;
             if (el.closest("[data-tabs-title]")) {
                 const tabTitle = el.closest("[data-tabs-title]");
                 const tabsBlock = tabTitle.closest("[data-tabs]");
+
                 if (!tabTitle.classList.contains("_tab-active")) {
                     let tabActiveTitle = tabsBlock.querySelectorAll(
                         "[data-tabs-title]._tab-active"
                     );
                     tabActiveTitle.length
                         ? (tabActiveTitle = Array.from(tabActiveTitle).filter(
-                              (item) =>
-                                  item.closest("[data-tabs]") === tabsBlock
+                              (item) => item.closest("[data-tabs]") === tabsBlock
                           ))
                         : null;
                     tabActiveTitle.length
@@ -387,12 +427,22 @@ function tabsInit() {
                 }
                 e.preventDefault();
 
-                if (tabsLine) {
-                    tabsLine.style.width = el.offsetWidth + "px";
-                    tabsLine.style.left = el.offsetLeft + "px";
-                }
+                updateTabsLine(tabsLine, tabTitle);
+
+                observeActiveTabResize(tabsLine, tabTitle);
             }
         }
+
+        const tabsBlocks = document.querySelectorAll("[data-tabs]");
+        tabsBlocks.forEach((tabsBlock) => {
+            const activeTab = tabsBlock.querySelector("[data-tabs-title]._tab-active");
+
+            if (activeTab) {
+                updateTabsLine(tabsLine, activeTab);
+
+                observeActiveTabResize(tabsLine, activeTab);
+            }
+        });
     }
     tabs();
 }

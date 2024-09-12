@@ -1,17 +1,22 @@
 /* reset */
 * {
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
-html, body {
-	height: 100%;
+html,
+body {
+    height: 100%;
 }
 body {
-	margin: 0;
-	box-sizing: inherit;
+    margin: 0;
+    box-sizing: inherit;
 }
-h1, h2, h3, p, ul {
-	margin: 0;
-	padding: 0;
+h1,
+h2,
+h3,
+p,
+ul {
+    margin: 0;
+    padding: 0;
 }
 
 /* ------- Tabs ------- */
@@ -90,11 +95,11 @@ h1, h2, h3, p, ul {
 /* -- Горизонтальный контент -- */
 .tabs__flex {
     display: flex;
-    gap: 40px;
+    column-gap: 40px;
     justify-content: space-between;
 }
 .tabs__flex > .tabs__text {
-	max-width: 50%;
+    max-width: 50%;
 }
 .tabs__flex .tabs__text-container {
     width: 100%;
@@ -103,8 +108,8 @@ h1, h2, h3, p, ul {
 .tabs__flex .tabs__image-container {
     max-width: 50%;
 }
-.tabs__flex .tabs__image-container img{
-	aspect-ratio: 1 / 1;
+.tabs__flex .tabs__image-container img {
+    aspect-ratio: 1 / 1;
 }
 
 /* -- Картинки -- */
@@ -118,7 +123,7 @@ h1, h2, h3, p, ul {
     height: 100%;
     max-width: 100%;
     max-height: 100%;
-	object-fit: cover;
+    object-fit: cover;
 }
 
 /* -- Заголовки в тексте -- */
@@ -193,6 +198,7 @@ h1, h2, h3, p, ul {
 
 /* -- Отступы -- */
 .tabs__text:not(:last-child),
+.tabs__text-container:not(:last-child),
 .tabs__iframe-container:not(:last-child),
 .tabs__image-container:not(:last-child),
 .tabs__list:not(:last-child),
@@ -212,7 +218,7 @@ h1, h2, h3, p, ul {
 }
 @media (max-width: 900px) {
     .tabs__flex {
-        align-items: center;
+        align-items: flex-start;
         flex-direction: column;
     }
 }
